@@ -13,6 +13,3 @@ As for other aspects about me, I love live sports and videogames. I have taken a
 ```
 --------------
 Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")`
-
-
-
