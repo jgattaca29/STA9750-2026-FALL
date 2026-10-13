@@ -14,14 +14,5 @@ As for other aspects about me, I love live sports and videogames. I have taken a
 --------------
 Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")`
 
-for(n in 1:4) {
-  fname <- sprintf("mp0%g.qmd", n)
-  if(file.exists(fname)) stop(fname, "found. Please contact instructor for advice.")
-  writeLines(sprintf('---
-title: "Mini-Project Placeholder"
----
 
-This is a placeholder for STA9750 Mini-Project %g. Check back soon for more!', n), fname)
-  quarto::quarto_render(fname)
-}
 
