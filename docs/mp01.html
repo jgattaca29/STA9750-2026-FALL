@@ -722,7 +722,35 @@ Attaching package: 'scales'</code></pre>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(period <span class="sc">==</span> <span class="st">"2026H1"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">slice_max</span>(hours_viewed, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">percentage =</span> <span class="fu">percent</span>(hours_viewed<span class="sc">/</span> <span class="fu">sum</span>(hours_viewed))) <span class="sc">|&gt;</span> </span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(title, hours_viewed, percentage)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(title, hours_viewed, percentage)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>(NETFLIX_DATA<span class="sc">$</span>global_availability))<span class="sc">*</span> <span class="dv">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+      No      Yes 
+64.90709 35.09291 </code></pre>
+</div>
+</div>
+<p>This command generates a dataset where we can see the top 10 for the year thus far. With the prop.table function, we can also see how only 35% of shows in the total catalogue are available globally.</p>
+<p>##Memo</p>
+<p>Our exploration of the dataset has generated insights that provide Netflix leadership with valuable information on how to proceed on decision-making for the approval of future projects. As Netflix continues to seek more market cap not only from the television markets, but also the film market, it is important to understand the existing viewership data built over the past three years. It is imperative that Netflix continues to seek novel productions that can translate into multiple seasons while remaining consistent towards production values that can yield feasible projects that feed viewers’ desire for fulfilling stories while expanding into the live television market.</p>
+<p>As it is well-known, a recent development that Netflix has gone forward in the past month is the obtaining of FIFA World Cup Match Streaming rights for the 2030 edition of the tournament. This is a significant step into the right direction for Netflix, as the World Cup generates a storyline of drama and excitement with every match. As it currently stands, it appears that these rights will be exclusive in the United States. It will be crucial for Netflix to take the steps towards ensuring their hold of the rights extends towards markets outside the United States, as it will continue to pay dividends in markets harder to capture. The difficulty will be that the television-holders in strong markets such as Europe will seek securities that allow them to maintain the rights towards the 2030 edition of the tournament.</p>
+<p>As for original content, it will be just as crucial to find the next franchise that can command the global audience’s attention while being fully owned by Netflix. The most seen IP in Netflix’s catalogue for the past 3 years has been Bridgerton. However, this show is only licensed by Netflix, it is not fully owned the way Stranger Things is. Originally, the plan for Netflix was to buy Warner Bros in order to gain access to its IP catalogue, out of which the DC Comics characters were a main draw for possible projects that are longer focused (meaning over 30 minutes and serialized storytelling). This is the type of content that still dominates up to the first half of 2026, thus it is paramount to continue to grow in this area. Although the line between television and film continues to blur, the top 10 list is still dominated by the series format. There have been prior attempts by Netflix to utilize superhero IP’s, such as Millarworld, the production company by comic books writer Mark Millar. Since the efforts from Millarworld did not translate into sustainable projects (Such as Jupiter’s Legacy, which was canceled after 1 season), it is best for Netflix to continue seeking feasible pitches that can connect with viewers. Out of all the tasks in entertainment, finding the right pitch will always be the most difficult task, thus it is important to seek originality as the cornerstone of the next initiative that can yield a project similar to Stranger Things.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="AI Usage Statement">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>AI Usage Statement
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>AI usage was limited to solving hiccups with code in this project. No generative AI was used in any shape or form to produce ideas or non-code text.</p>
+</div>
+</div>
 </div>
 
 

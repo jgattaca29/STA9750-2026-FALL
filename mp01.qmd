@@ -204,4 +204,23 @@ filter(period == "2026H1") |>
 slice_max(hours_viewed, n = 10) |> 
 mutate(percentage = percent(hours_viewed/ sum(hours_viewed))) |> 
 select(title, hours_viewed, percentage)
+
+prop.table(table(NETFLIX_DATA$global_availability))* 100
+
+
 ```
+This command generates a dataset where we can see the top 10 for the year thus far. With the prop.table function, we can also see how only 35% of shows in the total catalogue are available globally. 
+
+##Memo
+
+Our exploration of the dataset has generated insights that provide Netflix leadership with valuable information on how to proceed on decision-making for the approval of future projects. As Netflix continues to seek more market cap not only from the television markets, but also the film market, it is important to understand the existing viewership data built over the past three years. It is imperative that Netflix continues to seek novel productions that can translate into multiple seasons while remaining consistent towards production values that can yield feasible projects that feed viewers' desire for fulfilling stories while expanding into the live television market. 
+
+As it is well-known, a recent development that Netflix has gone forward in the past month is the obtaining of FIFA World Cup Match Streaming rights for the 2030 edition of the tournament. This is a significant step into the right direction for Netflix, as the World Cup generates a storyline of drama and excitement with every match. As it currently stands, it appears that these rights will be exclusive in the United States. It will be crucial for Netflix to take the steps towards ensuring their hold of the rights extends towards markets outside the United States, as it will continue to pay dividends in markets harder to capture. The difficulty will be that the television-holders in strong markets such as Europe will seek securities that allow them to maintain the rights towards the 2030 edition of the tournament. 
+
+As for original content, it will be just as crucial to find the next franchise that can command the global audience's attention while being fully owned by Netflix. The most seen IP in Netflix's catalogue for the past 3 years has been Bridgerton. However, this show is only licensed by Netflix, it is not fully owned the way Stranger Things is. Originally, the plan for Netflix was to buy Warner Bros in order to gain access to its IP catalogue, out of which the DC Comics characters were a main draw for possible projects that are longer focused (meaning over 30 minutes and serialized storytelling). This is the type of content that still dominates up to the first half of 2026, thus it is paramount to continue to grow in this area. Although the line between television and film continues to blur, the top 10 list is still dominated by the series format. There have been prior attempts by Netflix to utilize superhero IP's, such as Millarworld, the production company by comic books writer Mark Millar. Since the efforts from Millarworld did not translate into sustainable projects (Such as Jupiter's Legacy, which was canceled after 1 season), it is best for Netflix to continue seeking feasible pitches that can connect with viewers. Out of all the tasks in entertainment, finding the right pitch will always be the most difficult task, thus it is important to seek originality as the cornerstone of the next initiative that can yield a project similar to Stranger Things.
+
+::: {.callout-note title="AI Usage Statement" collapse="true"}
+
+AI usage was limited to solving hiccups with code in this project. No generative AI was used in any shape or form to produce ideas or non-code text.
+
+:::
