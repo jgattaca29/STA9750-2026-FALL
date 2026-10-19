@@ -1,5 +1,207 @@
 ---
-title: "Mini-Project Placeholder"
+title: "Mini Project 01: What We Watched: Exploring Netflix Data"
 ---
 
-This is a placeholder for STA9750 Mini-Project 1. Check back soon for more!
+## Preparing Data
+
+For this analysis, we will load the Netflix Watch Data prepared by Prof. Weylandt. We will take a glimpse into the data, as well as load the respective packages required to conduct the analysis.
+
+Step 1: Load Data
+
+```{r}
+#' Acquire Netflix What We Watched Reports
+#' 
+#' This function will acquire and standardize all data for MP#01
+#' from Netflix. Because Netflix hosts the data files behind a CDN, we
+#' are accessing the release pages and automatically extracting links to the
+#' relevant files (with CDN hash). 
+#' 
+#' After import, files are stacked vertically and some basic cleaning is
+#' performed. 
+load_netflix_data <- function(){
+  # Note to students: Make sure you have installed the tidyverse and fs packages
+  #                   before beginning this assignment. If you aren't sure,
+  #                   simply run `library(tidyverse)` at your R Console and, if
+  #                   you don't see an error message, `tidyverse` has been 
+  #                   installed. (Same for `fs`) If you still need to install
+  #                   either package, use the `install.packages` function as 
+  #                   demonstrated in class.
+  library(tidyverse)
+  library(rvest)
+  library(readxl)
+  library(fs)
+  
+  data_dir <- path("data", "mp01")
+  
+  if(!dir_exists(data_dir)){
+    dir_create(data_dir, showWarnings=FALSE, recurse=TRUE)
+  }
+  
+  NETFLIX_URLS <- list(
+    `2023H1` = "https://about.netflix.com/news/what-we-watched-a-netflix-engagement-report",
+    `2023H2` = "https://about.netflix.com/news/what-we-watched-the-second-half-of-2023",
+    `2024H1` = "https://about.netflix.com/news/what-we-watched-the-first-half-of-2024",
+    `2024H2` = "https://about.netflix.com/news/what-we-watched-the-second-half-of-2024",
+    `2025H1` = "https://about.netflix.com/news/what-we-watched-the-first-half-of-2025",
+    `2025H2` = "https://about.netflix.com/news/what-we-watched-the-second-half-of-2025",
+    `2026H1` = "https://about.netflix.com/news/what-we-watched-the-first-half-of-2026"
+  )
+  
+  download_if_needed <- function(url, local){
+    if(!file_exists(local)){
+      download.file(url, local, quiet = TRUE, mode = "wb")
+    }
+    
+    return(local)
+  }
+  
+  NETFLIX_URLS |> 
+    map(read_html) |> 
+    map(html_element, xpath = "//a[contains(@href, '.xlsx')]") |> 
+    map_chr(html_attr, "href") |> 
+    enframe("period", "url") |> 
+    mutate(path = path(data_dir, paste0(period, ".xlsx")), 
+           path = map2(url, path, download_if_needed), 
+           data = map(path, read_excel, skip=3, na="*"), 
+           data = map(data, \(x) x |> mutate(`Release Date` = as.Date(`Release Date`)))) |>
+    unnest(data) |> 
+    select(-url, -path) |> 
+    mutate(year=str_sub(period, 1, 4), 
+           half=str_sub(period, start=6), 
+           period_start = make_date(year, if_else(half==1, 1, 7), 1), 
+           period_end = make_date(year, if_else(half==1, 6, 12), if_else(half==1, 30, 31))) |> 
+    filter(!is.na(`Hours Viewed`)) |> 
+    mutate(live_event = !is.na(Runtime) & str_detect(Runtime, "\\d+:\\d+\\*"), 
+           clean_time = str_remove(Runtime, fixed("*")),
+           Runtime = 60 * hour(hm(clean_time)) + minute(hm(clean_time))) |>
+    select(-clean_time) |>
+    mutate(Runtime = coalesce(Runtime, mean(Runtime, na.rm=TRUE)), 
+           .by=Title, 
+           Title = stringi::stri_trans_general(Title, "Latin-ASCII"),
+           Title = str_remove(Title, " // .*"), 
+           Title = str_remove(Title, "[^[:ascii:]].*"), 
+           Title = str_trim(Title)) |>
+    filter_out(Title == "") |>
+    select(year, 
+           period, 
+           period_start, 
+           period_end, 
+           Title, 
+           -half, 
+           Runtime, 
+           Views, 
+           `Hours Viewed`, 
+           `Release Date`,
+           `Available Globally?`, 
+           live_event)
+}
+
+NETFLIX_DATA <- load_netflix_data()
+```
+
+Step 2: Cleaning Dataset column names
+
+We will use functions (namely "rename") in the tidyverse package to clean up the resulting dataset into a format that's easier for us to code with, as some of these columns are named in a not-so-friendly manner for R.
+
+```{r}
+library(tidyverse)
+
+NETFLIX_DATA <- NETFLIX_DATA |>
+  rename(title = `Title`,
+          runtime = `Runtime`,
+          views = `Views`,
+          hours_viewed = `Hours Viewed`,
+          release_date = `Release Date`,
+          global_availability = `Available Globally?`)
+```
+
+Step 3: Fix Column Types
+
+In this step, we have to change the type of value from one to another for two of the variables, namely for "Global Availability" and "Year" columns. We will use the mutate and the as.integer/as.numeric functions. For "Year", we will mutate the output value from character to integer. For "Global Availability", we will change the output values from string "Yes" and "No" to true logical TRUE/FALSE values.
+
+```{r}
+
+NETFLIX_DATA |>
+  mutate(year = as.integer(year))
+  
+NETFLIX_DATA |>
+  mutate(global_availability = as.logical("Yes") == "True")
+
+NETFLIX_DATA |>
+  mutate(global_availability = as.logical("No") == "False")
+
+```
+
+## Initial Data Exploration
+
+Now that our data are formatted, we will procceed to take a glimpse into the dataset itself. We will also utilise the gt package to obtain table outputs that can help us understand the data better than raw outputs. 
+
+Step 1: Load Respective Packages and Use Functions
+
+```
+install.packages("skimr") 
+library(skimr) 
+install.packages("gt")
+library(gt)
+```
+
+As an example, we will use the glimpse and summary functions at first to get our first look at the dataset. Afterwards, we will use skim, as it offers more valuable insights. 
+
+```{r}
+glimpse(NETFLIX_DATA)
+summary(NETFLIX_DATA)
+skimr::skim(NETFLIX_DATA)
+
+```
+
+
+We can see that the dataset contains a total of 11 columns and 61,892 rows. That's a lot of Netflix titles! As for column types, 4 of them are character, 3 are dates, 1 is a logical (the global availability variable we re-coded), and 3 are numeric (including the year variable we re-coded).
+
+Step 2: Exploratory Questions of the Dataset
+
+We wish to understand the dataset on a deeper level than these surface insights. For that, we will use several functions to find out facts that enhance our understanding. For starters, we will find out the date range covered in the set:
+
+```{r}
+range(NETFLIX_DATA$period_start, NETFLIX_DATA$period_end, na.rm = TRUE)
+```
+We can see now that the dates covered range from "2023-01-01" to "2026-06-30".
+
+Now we are going to find out the amount of different shows and movies in the dataset. Keep in mind that Netflix has a practice of renaming show seasons. As a fun fact, this is a strategy to reset the show's respective season into it's "own show", as it helps them circumvent royalty fees for the staff involved in a show production.
+
+```{r}
+number_titles <- n_distinct(NETFLIX_DATA$Title)
+```
+With this command, we can see that there are 24,427 titles in the dataset. 
+
+Now, say we want to find out how many watched hours does the Bridgerton series of shows contains. We can use the following function to find out:
+```{r}
+bridgerton_total_hours <- NETFLIX_DATA |> 
+filter(str_detect(title,'Bridgerton')) |> 
+summarize(total_hours = sum(hours_viewed, na.rm = TRUE)) |> 
+pull(total_hours)
+```
+The str_detect function helps us include the keyword 'Bridgerton' to have RStudio include any title that contains the keyword and include it into the sum. We can see that Bridgerton has 4.8628 billion total hours.
+
+We can use a similar process for the core Stranger Things show. However, we are going to exclude the spin-off shows, as well as the "show" where it plays background music for people who like something going on in the background of their screens while they do something else. We use a series of filter in function to have R include our desired title, while we use filter out to exclude the spin-off shows. 
+```{r}
+stranger_things_total_hours <- NETFLIX_DATA |>
+filter(str_detect(title, "Stranger Things")) |>
+filter_out(str_detect(title, "Beyond Stranger Things")) |>
+filter_out(str_detect(title, "Tales from '85")) |>
+filter_out(str_detect(title, "Stranger Things: Fireplace")) |>
+summarize(total_hours = sum(hours_viewed, na.rm = TRUE)) |>
+pull(total_hours)
+```
+We can see that the core Stranger Things show has collected a total of 5.5889 billion views across 5 seasons. It is easy to see why it was the crown jewel for Netflix ever since its inception. 
+
+It is easy to notice how flagship titles for Netflix have yielded results for the streaming platform. Now, we wish to bring focus a bit closer to the present state of the platform. Thus in the following code, we create an object where we filter the titles down to one period, the first half of 2026. Afterwards, we use the slice_max function to limit the amount of titles displayed in the tibble to the top 10. Using mutate, we can create a percentage of how much of the viewership each title commanded during the time period. Finally, we display the object using the respective variables of interest. 
+```{r}
+
+library(scales)
+
+top10_2026h1 <- NETFLIX_DATA |> 
+filter(period == "2026H1") |>
+slice_max(hours_viewed, n = 10) |> 
+mutate(percentage = percent(hours_viewed/ sum(hours_viewed))) |> 
+select(title, hours_viewed, percentage)
+```
