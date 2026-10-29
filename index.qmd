@@ -1,15 +1,39 @@
 ---
 title: "Juan Gatica's Project Page"
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
-My name is Juan Gatica. I am currently a grad student at the Zicklin School of Business, majoring in Quantitative Methods & Modeling. I come from a public health background, having graduated from the NYU College of Global Public Health with a Master's of Public Health Degree in Epidemiology. I have a passion for research in the field of addiction, particularly opioids, and for understanding the determinants of health that accompany addiction. I aim to tackle this issue via quantitative analysis techniques combined with my public health expertise. 
+My name is Juan Gatica. I am currently a grad student at the Zicklin
+School of Business, majoring in Quantitative Methods & Modeling. I come
+from a public health background, having graduated from the NYU College
+of Global Public Health with a Master's of Public Health Degree in
+Epidemiology. I have a passion for research in the field of addiction,
+particularly opioids, and for understanding the determinants of health
+that accompany addiction. I aim to tackle this issue via quantitative
+analysis techniques combined with my public health expertise.
 
-As for other aspects about me, I love live sports and videogames. I have taken a liking to baseball statistics and I am a life-long JRPG fan of games such as Final Fantasy. 
-
+As for other aspects about me, I love live sports and videogames. I have
+taken a liking to baseball statistics and I am a life-long JRPG fan of
+games such as Final Fantasy.
 
 ```{r}
 #| include: false
 1+1
 ```
---------------
-Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")`
+
+|                                                                 |
+|-----------------------------------------------------------------|
+| Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")` |
+
+
+
+
+#6
+
+prop.table(table(NETFLIX_DATA$global_availability))* 100
+
+install.packages("weights") library(weights) #Next section
+
+#1
